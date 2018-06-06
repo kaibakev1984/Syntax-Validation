@@ -3,9 +3,6 @@
 #include "pila.h"
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
-#define COMILLA '\''
-
 bool es_apertura(char sep){
 	return sep == '{' || sep == '(' || sep == '[' ;
 }
@@ -72,9 +69,9 @@ bool esta_balanceado(char *linea){
 void mostrar_validacion(char *linea){
 	strtok(linea, "\n");
 	if(esta_balanceado(linea)){
-		fprintf(stdout, "%s %s\n", linea, "OK");
+		fprintf(stdout, "%s\n", "OK");
 	}else{
-		fprintf(stdout, "%s %s\n", linea, "ERROR");
+		fprintf(stdout, "%s\n", "ERROR");
 	}
 }
 
