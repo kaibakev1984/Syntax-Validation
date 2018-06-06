@@ -15,18 +15,19 @@ bool es_cierre(char sep){
 }
 
 bool son_mismo_tipo(char cierre, char apertura){
+	bool ok;
 	switch(cierre){
 		case '}':
-			return apertura == '{';
+			ok = apertura == '{';
 			break;
 		case ')':
-			return apertura == '(';
+			ok = apertura == '(';
 			break;
 		case ']':
-			return apertura == '[';
+			ok = apertura == '[';
 			break;
 	}
-	return true;
+	return ok;
 }
 
 bool tope_es_comilla(pila_t *pila){
