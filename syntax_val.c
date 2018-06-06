@@ -35,12 +35,12 @@ bool tope_es_comilla(pila_t *pila){
 	return *sep == COMILLA;
 }
 
-bool verificar_sintaxis(pila_t *pila, char car){
-	if(es_apertura(car)){
-		pila_apilar(pila, &car);
+bool verificar_sintaxis(pila_t *pila, char *linea, size_t i){
+	if(es_apertura(linea[i])){
+		pila_apilar(pila, &linea[i]);
 	}
-	 if(es_cierre(car)){
-		if(!son_mismo_tipo(car, *((char *)pila_ver_tope(pila)))){
+	 if(es_cierre(linea[i])){
+		if(!son_mismo_tipo(linea[i], *(char *)pila_ver_tope(pila))){
 			return true;
 		}
 		pila_desapilar(pila);
@@ -59,18 +59,18 @@ bool esta_balanceado(char *linea){
 			if(linea[i] == '\''){
 				omitir = true;
 			}else{
-				salir = verificar_sintaxis(pila, linea[i]);
+				salir = verificar_sintaxis(pila, linea, i);
 			}
 		}
 		i++;
 	}
-	bool ok = pila_esta_vacia(pila);
+	bool ok = pila_esta_vacia(pila) && !omitir;
 	pila_destruir(pila);
 	return ok;
 }
 
 void mostrar_validacion(char *linea){
-	//strtok(linea, "\n");
+	strtok(linea, "\n");
 	if(esta_balanceado(linea)){
 		fprintf(stdout, "%s %s\n", linea, "OK");
 	}else{
@@ -80,8 +80,11 @@ void mostrar_validacion(char *linea){
 
 int main(int argc, char const *argv[])
 {
-	char *linea = "[[]]";
-	mostrar_validacion(linea);
+	char *linea = NULL;
+	size_t capacidad;
+	while(getline(&linea, &capacidad, stdin) != -1){
+		mostrar_validacion(linea);
+	}
 
 	return 0;
 }
