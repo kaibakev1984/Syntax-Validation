@@ -14,20 +14,19 @@ bool es_cierre(char sep){
 	return sep == '}' || sep == ')' || sep == ']';
 }
 
-bool son_mismo_tipo(char cierre, void *apertura){
-	char ape_car = *(char *)apertura;
+bool son_mismo_tipo(char cierre, char apertura){
 	switch(cierre){
 		case '}':
-			return ape_car == '{';
+			return apertura == '{';
 			break;
 		case ')':
-			return ape_car == '(';
+			return apertura == '(';
 			break;
 		case ']':
-			return ape_car == '[';
+			return apertura == '[';
 			break;
 	}
-	return false;
+	return true;
 }
 
 bool tope_es_comilla(pila_t *pila){
@@ -36,25 +35,31 @@ bool tope_es_comilla(pila_t *pila){
 	return *sep == COMILLA;
 }
 
-bool esta_balanceado(char *linea, size_t len){
+bool verificar_sintaxis(pila_t *pila, char car){
+	if(es_apertura(car)){
+		pila_apilar(pila, &car);
+	}
+	 if(es_cierre(car)){
+		if(!son_mismo_tipo(car, *((char *)pila_ver_tope(pila)))){
+			return true;
+		}
+		pila_desapilar(pila);
+	}
+	return false;
+}
+
+bool esta_balanceado(char *linea){
 	pila_t *pila = pila_crear();
 	size_t i = 0;
-	bool salir = false;
-	while(i < len && !salir){
-		if(tope_es_comilla(pila)){
-			if(linea[i] == COMILLA){
-				pila_desapilar(pila);
-			}
+	bool omitir = false, salir = false;
+	while(linea[i] != '\0' && !salir){
+		if(omitir){
+			if(linea[i] == '\'') omitir = false;
 		}else{
-			if(es_apertura(linea[i]) || linea[i] == COMILLA){
-				pila_apilar(pila, &linea[i]);
-			}
-			if(es_cierre(linea[i])){
-				if(!son_mismo_tipo(linea[i], pila_ver_tope(pila))){
-					salir = true;
-				}else{
-					pila_desapilar(pila);
-				}
+			if(linea[i] == '\''){
+				omitir = true;
+			}else{
+				salir = verificar_sintaxis(pila, linea[i]);
 			}
 		}
 		i++;
@@ -64,19 +69,19 @@ bool esta_balanceado(char *linea, size_t len){
 	return ok;
 }
 
+void mostrar_validacion(char *linea){
+	//strtok(linea, "\n");
+	if(esta_balanceado(linea)){
+		fprintf(stdout, "%s %s\n", linea, "OK");
+	}else{
+		fprintf(stdout, "%s %s\n", linea, "ERROR");
+	}
+}
+
 int main(int argc, char const *argv[])
 {
-	char *linea = NULL;
-	size_t capacidad;
-	ssize_t leidos;
-	while((leidos = getline(&linea, &capacidad, stdin)) != -1){
-		strtok(linea, "\n");
-		if(esta_balanceado(linea, leidos)){
-			fprintf(stdout, "%s\n", "OK");
-		}else{
-			fprintf(stdout, "%s\n", "ERROR");
-		}
-	}
-	
+	char *linea = "[[]]";
+	mostrar_validacion(linea);
+
 	return 0;
 }
