@@ -13,12 +13,20 @@ all: clear $(EXEC)
 
 free: *.o
 	rm -f *.o pruebas
-
-run: all clear
+run1: all clear
 	./$(EXEC)
+run: all clear
+	# Caso archivo vacío
+	cat script_vacio.txt | ./$(EXEC)
+	# Casos particulares
+	cat script2.txt | ./$(EXEC)
+	# Casos borde proporcionados por la cátedra
+	cat script.txt | ./$(EXEC)
 clear:
 	clear
 valgrind: all clear
-	valgrind $(VFLAGS) ./$(EXEC)
+	valgrind $(VFLAGS) ./$(EXEC) < script_vacio.txt
+	valgrind $(VFLAGS) ./$(EXEC) < script.txt
+	valgrind $(VFLAGS) ./$(EXEC) < script2.txt
 gdb: all clear
 	gdb -tui ./$(EXEC)

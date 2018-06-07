@@ -32,7 +32,7 @@ bool verificar_sintaxis(pila_t *pila, char *linea, size_t i){
 	if(es_apertura(linea[i])){
 		pila_apilar(pila, &linea[i]);
 	}
-	 if(es_cierre(linea[i])){
+	 else if(es_cierre(linea[i])){
 		if(!son_mismo_tipo(linea[i], *(char *)pila_ver_tope(pila))){
 			return true;
 		}
@@ -45,7 +45,7 @@ bool esta_balanceado(char *linea){
 	pila_t *pila = pila_crear();
 	size_t i = 0;
 	bool omitir = false, salir = false;
-	while(linea[i] != '\n' && !salir){
+	while(!salir && linea[i] != '\0'){
 		if(omitir){
 			if(linea[i] == '\'') omitir = false;
 		}else{
@@ -63,10 +63,11 @@ bool esta_balanceado(char *linea){
 }
 
 void mostrar_validacion(char *linea){
+	strtok(linea, "\n");
 	if(esta_balanceado(linea)){
-		fprintf(stdout, "%s\n", "OK");
+		fprintf(stdout, "%s: %s\n", linea, "OK");
 	}else{
-		fprintf(stdout, "%s\n", "ERROR");
+		fprintf(stdout, "%s: %s\n", linea, "ERROR");
 	}
 }
 
