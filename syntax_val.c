@@ -28,12 +28,6 @@ bool son_mismo_tipo(char cierre, char apertura){
 	return ok;
 }
 
-bool tope_es_comilla(pila_t *pila){
-	if(pila_esta_vacia(pila)) return false;
-	char *sep = pila_ver_tope(pila);
-	return *sep == '\'';
-}
-
 bool verificar_sintaxis(pila_t *pila, char *linea, size_t i){
 	if(es_apertura(linea[i])){
 		pila_apilar(pila, &linea[i]);
