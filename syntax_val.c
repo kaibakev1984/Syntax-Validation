@@ -12,7 +12,9 @@ bool es_cierre(char sep){
 	return sep == '}' || sep == ')' || sep == ']';
 }
 
-bool son_mismo_tipo(char cierre, char apertura){
+bool son_mismo_tipo(char cierre, void *ape_car){
+	if(!ape_car) return false;
+	char apertura = *(char *)ape_car;
 	bool ok;
 	switch(cierre){
 		case '}':
@@ -33,7 +35,7 @@ bool verificar_sintaxis(pila_t *pila, char *linea, size_t i){
 		pila_apilar(pila, &linea[i]);
 	}
 	 else if(es_cierre(linea[i])){
-		if(!son_mismo_tipo(linea[i], *(char *)pila_ver_tope(pila))){
+		if(!son_mismo_tipo(linea[i], pila_ver_tope(pila))){
 			return true;
 		}
 		pila_desapilar(pila);
