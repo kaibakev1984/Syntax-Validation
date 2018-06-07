@@ -2,6 +2,7 @@
 #define _GNU_SOURCE
 #include "pila.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 bool es_apertura(char sep){
 	return sep == '{' || sep == '(' || sep == '[' ;
@@ -12,24 +13,25 @@ bool es_cierre(char sep){
 }
 
 bool son_mismo_tipo(char cierre, char apertura){
+	bool ok;
 	switch(cierre){
 		case '}':
-			return apertura == '{';
+			ok = apertura == '{';
 			break;
 		case ')':
-			return apertura == '(';
+			ok = apertura == '(';
 			break;
 		case ']':
-			return apertura == '[';
+			ok = apertura == '[';
 			break;
 	}
-	return true;
+	return ok;
 }
 
 bool tope_es_comilla(pila_t *pila){
 	if(pila_esta_vacia(pila)) return false;
 	char *sep = pila_ver_tope(pila);
-	return *sep == COMILLA;
+	return *sep == '\'';
 }
 
 bool verificar_sintaxis(pila_t *pila, char *linea, size_t i){
@@ -49,7 +51,7 @@ bool esta_balanceado(char *linea){
 	pila_t *pila = pila_crear();
 	size_t i = 0;
 	bool omitir = false, salir = false;
-	while(linea[i] != '\0' && !salir){
+	while(linea[i] != '\n' && !salir){
 		if(omitir){
 			if(linea[i] == '\'') omitir = false;
 		}else{
@@ -67,7 +69,6 @@ bool esta_balanceado(char *linea){
 }
 
 void mostrar_validacion(char *linea){
-	strtok(linea, "\n");
 	if(esta_balanceado(linea)){
 		fprintf(stdout, "%s\n", "OK");
 	}else{
@@ -82,6 +83,6 @@ int main(int argc, char const *argv[])
 	while(getline(&linea, &capacidad, stdin) != -1){
 		mostrar_validacion(linea);
 	}
-
+	free(linea);
 	return 0;
 }
